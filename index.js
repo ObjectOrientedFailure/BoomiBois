@@ -1,11 +1,16 @@
 const express = require('express');
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-//const { External } = require('util/types');
+const PORT = process.env.PORT || 5500;//added for heroku
+app.use(express.static('public'));
+//const http = require('http'); //these worked locally
+//const server = http.createServer(app);
+const http = require('http').Server(app);
+//const { Server } = require("socket.io");//local version
+
+//const { External } = require('util/types');//straight up trash
 //const { isExternal } = require('util/types');
-const io = new Server(server);
+//const io = new Server(server); //local version
+const io = require('socket.io')(http);
 const playercolors = ["red","darkred","green","aqua","navy","blue","purple","deeppink","brown","darkgreen","indigo","lime","white"];
 const xsize = 1024;
 const ysize = 768;
@@ -245,7 +250,12 @@ var ats = [new Attractor(160,160,16,1024)];
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
-});
+}); //NOT modified for heroku...
+
+http.listen(PORT, function(){
+  console.log('listening on ${PORT}');
+});//added for heroku
+
 
 //io.on('connection', (socket) => {//chat messaging
 //    socket.on('chat message', (msg) => {
